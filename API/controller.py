@@ -212,7 +212,7 @@ class TaskSpaceJogController:
         self.robot.motion.scale_setup.set(velocity=velocity, acceleration=acceleration)
         self.robot.controller_state.set('run', await_sec=120)
 
-        self.target_q = None  # целевая конфигурация в joint_space
+        self.target_pose = self.get_current_tcp()  # целевая конфигурация в joint_space
         self.lock = threading.Lock()
         self.running = False
         self.thread = None

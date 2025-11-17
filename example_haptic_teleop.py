@@ -30,7 +30,7 @@ while True:
         data, addr = None, None  # или просто continue
 
     if len(message):
-        print(message)
+        # print(message)
         # R = np.array([message[3:6], message[6:9], message[9:12]])
         robot.set_target(message[0:3], R)
 
