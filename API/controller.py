@@ -4,6 +4,25 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 from API.rc_api import RobotApi
 
+import time
+
+def precise_sleep(dt: float, slack_time: float=0.001, time_func=time.monotonic):
+    """
+    Use hybrid of time.sleep and spinning to minimize jitter.
+    Sleep dt - slack_time seconds first, then spin for the rest.
+    """
+    t_start = time_func()
+    if dt > slack_time:
+        time.sleep(dt - slack_time)
+    t_end = t_start + dt
+    while time_func() < t_end:
+        pass
+    return
+
+# ====================================================================================================
+# ====================================================================================================
+# ====================================================================================================
+
 class JointSpaceJogController:
     def __init__(self, ip="10.10.10.10", rate_hz=100, velocity=1, acceleration=1, treshold=0.5):
         """
@@ -171,7 +190,7 @@ class JointSpaceJogController:
             elapsed = time.time() - start_time
             time_to_sleep = self.dt - elapsed
             if time_to_sleep > 0:
-                time.sleep(time_to_sleep)
+                precise_sleep(dt=time_to_sleep)
 
     # ====================================================================================================
 
@@ -344,7 +363,7 @@ class TaskSpaceJogController:
             elapsed = time.time() - start_time
             time_to_sleep = self.dt - elapsed
             if time_to_sleep > 0:
-                time.sleep(time_to_sleep)
+                precise_sleep(dt=time_to_sleep)
 
     # ====================================================================================================
 
