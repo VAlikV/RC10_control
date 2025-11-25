@@ -1,0 +1,10 @@
+[workspace]
+authors = ["VAlikV <alik.valiullin2002@yandex.ru>"]
+channels = ["conda-forge"]
+name = "RC10_control"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
