@@ -21,7 +21,7 @@ def set_logger(**kwargs) -> None | logging.Logger:
         return logger_template.logger
     logger = logger_template.logger
     if not logger_template.enable_logger:
-        logger.setLevel(logging.CRITICAL + 1)
+        logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.DEBUG)
         std_formatter = StdFormatter()
