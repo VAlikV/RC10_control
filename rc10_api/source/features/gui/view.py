@@ -4,16 +4,16 @@ from tkinter import (
     font, ttk
 )
 
-from API.source.ap_interface.motion.coordinate_system import CoordinateSystem
-from API.source.core.exceptions.data_validation_error.argument_error import (
+from rc10_api.source.ap_interface.motion.coordinate_system import CoordinateSystem
+from rc10_api.source.core.exceptions.data_validation_error.argument_error import (
     validation
 )
-from API.source.features.gui.bindings import CoordinateEntryGroup, RTDGroup
-from API.source.features.gui.custom_button import _CustomButton
-from API.source.models.classes.enum_classes.various_types import (
+from rc10_api.source.features.gui.bindings import CoordinateEntryGroup, RTDGroup
+from rc10_api.source.features.gui.custom_button import _CustomButton
+from rc10_api.source.models.classes.enum_classes.various_types import (
     AngleUnitTypes, GUICoordinateSystem, MotionTypes
 )
-from API.source.models.constants import JOINTS_COUNT
+from rc10_api.source.models.constants import JOINTS_COUNT
 
 
 validate_gui_entry = validation.validate_gui_entry

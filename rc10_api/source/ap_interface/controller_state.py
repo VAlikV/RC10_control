@@ -3,27 +3,27 @@ import select
 from struct import pack
 from typing import TYPE_CHECKING
 
-from API.source.core.exceptions.data_validation_error.argument_error import (
+from rc10_api.source.core.exceptions.data_validation_error.argument_error import (
     validation)
-from API.source.core.exceptions.data_validation_error.generic_error import (
+from rc10_api.source.core.exceptions.data_validation_error.generic_error import (
     FunctionTimeOutError, RobotCalibrationPositionError
 )
-from API.source.features.tools import sleep
-from API.source.models.classes.enum_classes.state_classes import (
+from rc10_api.source.features.tools import sleep
+from rc10_api.source.models.classes.enum_classes.state_classes import (
     InComingControllerState as Ics, OutComingControllerState as Ocs
 )
-from API.source.models.constants import (
+from rc10_api.source.models.constants import (
     CHECK_FREQUENCY_SEC, CTRLR_SET_GET_STATE_PACK_UNPACK_FORMAT,
     SET_CTRLR_STATE_AWAIT_SEC
 )
-from API.source.models.type_aliases import ControllerState_
+from rc10_api.source.models.type_aliases import ControllerState_
 
 if TYPE_CHECKING:
     from logging import Logger
 
-    from API.source.ap_interface.motion.joint_motion import JointMotion
-    from API.source.core.network.controller_socket import Controller
-    from API.source.core.network.rtd_receiver_socket import RTDReceiver
+    from rc10_api.source.ap_interface.motion.joint_motion import JointMotion
+    from rc10_api.source.core.network.controller_socket import Controller
+    from rc10_api.source.core.network.rtd_receiver_socket import RTDReceiver
 
 
 validate_literal = validation.validate_literal

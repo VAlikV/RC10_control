@@ -2,7 +2,7 @@ import threading
 import time
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-from API.rc_api import RobotApi
+from rc10_api.rc_api import RobotApi
 
 import time
 

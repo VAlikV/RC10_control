@@ -2,23 +2,23 @@ from __future__ import annotations
 from struct import pack
 from typing import TYPE_CHECKING
 
-import API.source.features.mathematics.unit_convert as unit_c
-from API.source.features.tools import (
+import rc10_api.source.features.mathematics.unit_convert as unit_c
+from rc10_api.source.features.tools import (
     dataclass_to_tuple, set_position_orientation_units
 )
-from API.source.core.exceptions.data_validation_error.argument_error import (
+from rc10_api.source.core.exceptions.data_validation_error.argument_error import (
     validation
 )
-from API.source.features.mathematics.coordinate_system import (
+from rc10_api.source.features.mathematics.coordinate_system import (
     convert_position_orientation
 )
-from API.source.models.classes.data_classes.command_templates import (
+from rc10_api.source.models.classes.data_classes.command_templates import (
     InverseKinematicOptimalTemplate, MOTION_SETUP
 )
-from API.source.models.classes.enum_classes.controller_commands import (
+from rc10_api.source.models.classes.enum_classes.controller_commands import (
     Getters as Get
 )
-from API.source.models.constants import (
+from rc10_api.source.models.constants import (
     CTRLR_IKINE_CMD_PACK_FORMAT, CTRLR_IKINE_CMD_UNPACK_FORMAT,
     CTRLR_FKINE_CMD_PACK_FORMAT, CTRLR_FKINE_CMD_UNPACK_FORMAT,
     CTRLR_IKINE_OPTIMAL_CMD_PACK_FORMAT, CTRLR_IKINE_OPTIMAL_CMD_UNPACK_FORMAT,
@@ -26,14 +26,14 @@ from API.source.models.constants import (
     JOINT_COUNT, ORIENTATION_SLICE, POSITION_ORIENTATION_LENGTH,
     POSITION_SLICE, PREVIOUS_FKINE_SOLUTION_OFFSET, RESPONSE_CODE_OFFSET
 )
-from API.source.models.type_aliases import AngleUnits, PositionOrientation
+from rc10_api.source.models.type_aliases import AngleUnits, PositionOrientation
 
 if TYPE_CHECKING:
-    from API.source.ap_interface.motion.coordinate_system import (
+    from rc10_api.source.ap_interface.motion.coordinate_system import (
         CoordinateSystem
     )
-    from API.source.ap_interface.motion.joint_motion import JointMotion
-    from API.source.core.network.controller_socket import Controller
+    from rc10_api.source.ap_interface.motion.joint_motion import JointMotion
+    from rc10_api.source.core.network.controller_socket import Controller
 
 
 validate_length = validation.validate_length

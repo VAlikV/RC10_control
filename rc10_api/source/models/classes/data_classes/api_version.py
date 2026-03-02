@@ -4,12 +4,12 @@ from dataclasses import dataclass
 @dataclass
 class Version:
     """
-    Версия API. Создается из версии ПО ядра, протокола ядра и версии ПО API.
+    Версия rc10_api. Создается из версии ПО ядра, протокола ядра и версии ПО rc10_api.
 
     Attributes:
         proto_version: Версия протокола ядра.
         core_version: Версия ПО ядра робота.
-        api_version: Версия ПО API.
+        api_version: Версия ПО rc10_api.
     """
 
     proto_version: str | int = 0x02000500

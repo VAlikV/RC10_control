@@ -22,7 +22,7 @@ VOLTAGE_VALUES_RANGE = (0, 10)  # В
 BITS_IN_BYTE = 8
 
 # value according to robot core logics (btw, real amount is 24 in
-# [1.2.50.33555456/3] api version)
+# [1.2.50.33555456/3] rc10_api version)
 DIGITAL_IO_INDEX_COUNT = 64
 
 # Log constants

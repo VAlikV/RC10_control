@@ -1,4 +1,4 @@
-from API.source.models.classes.enum_classes.base_int_enum import BaseIntEnum
+from rc10_api.source.models.classes.enum_classes.base_int_enum import BaseIntEnum
 
 
 class InComingSafetyStatus(BaseIntEnum):

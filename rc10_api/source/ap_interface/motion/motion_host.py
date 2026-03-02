@@ -2,33 +2,33 @@ from __future__ import annotations
 from struct import pack
 from typing import cast, TYPE_CHECKING
 
-import API.source.features.mathematics.unit_convert as unit_c
-from API.source.ap_interface.motion.joint_motion import JointMotion
-from API.source.ap_interface.motion.kinematics_solution import Kinematics
-from API.source.ap_interface.motion.linear_motion import LinearMotion
-from API.source.ap_interface.motion.motion_mode import MotionMode
-from API.source.ap_interface.motion.move_scaling import MoveScaling
-from API.source.core.exceptions.data_validation_error.argument_error import (
+import rc10_api.source.features.mathematics.unit_convert as unit_c
+from rc10_api.source.ap_interface.motion.joint_motion import JointMotion
+from rc10_api.source.ap_interface.motion.kinematics_solution import Kinematics
+from rc10_api.source.ap_interface.motion.linear_motion import LinearMotion
+from rc10_api.source.ap_interface.motion.motion_mode import MotionMode
+from rc10_api.source.ap_interface.motion.move_scaling import MoveScaling
+from rc10_api.source.core.exceptions.data_validation_error.argument_error import (
     validation
 )
-from API.source.core.exceptions.data_validation_error.generic_error import (
+from rc10_api.source.core.exceptions.data_validation_error.generic_error import (
     AddWaypointError
 )
-from API.source.features.gui.ui_controller import SimpleJoystickUI
-from API.source.features.tools import dataclass_to_tuple, sleep
-from API.source.models.classes.data_classes.command_templates import (
+from rc10_api.source.features.gui.ui_controller import SimpleJoystickUI
+from rc10_api.source.features.tools import dataclass_to_tuple, sleep
+from rc10_api.source.models.classes.data_classes.command_templates import (
     MOTION_SETUP, MoveCommandTemplate
 )
-from API.source.models.classes.enum_classes.controller_commands import (
+from rc10_api.source.models.classes.enum_classes.controller_commands import (
     AddWayPointCommand as Awp, Getters as Get, Setters as Set
 )
-from API.source.models.classes.enum_classes.state_classes import (
+from rc10_api.source.models.classes.enum_classes.state_classes import (
     OutComingMotionMode as Omm
 )
-from API.source.models.classes.enum_classes.various_types import (
+from rc10_api.source.models.classes.enum_classes.various_types import (
     AddWayPointErrorCode as AwpErr
 )
-from API.source.models.constants import (
+from rc10_api.source.models.constants import (
     ADD_WAY_POINT_ERROR_DESCRIPTION, CTRLR_ADD_WP_CMD_PACK_FORMAT,
     CTRLR_GET_SET_HOME_POSE_PACK_UNPACK_FORMAT,
     MOVE_TO_HOME_POSE_ACCEL, MOVE_TO_HOME_POSE_SPEED,
@@ -36,16 +36,16 @@ from API.source.models.constants import (
     POSITION_ORIENTATION_LENGTH, WP_COUNT_LIMITS, WP_COUNTER_MAX_VALUE,
     CTRLR_COMS_ADD_WP_RES_FORMAT
 )
-from API.source.models.type_aliases import AngleUnits, PositionOrientation
+from rc10_api.source.models.type_aliases import AngleUnits, PositionOrientation
 
 if TYPE_CHECKING:
     from logging import Logger
 
-    from API.source.ap_interface.motion.coordinate_system import (
+    from rc10_api.source.ap_interface.motion.coordinate_system import (
         CoordinateSystem
     )
-    from API.source.core.network.controller_socket import Controller
-    from API.source.core.network.rtd_receiver_socket import RTDReceiver
+    from rc10_api.source.core.network.controller_socket import Controller
+    from rc10_api.source.core.network.rtd_receiver_socket import RTDReceiver
 
 
 validate_length = validation.validate_length

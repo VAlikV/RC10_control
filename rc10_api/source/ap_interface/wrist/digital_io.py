@@ -3,46 +3,46 @@ from __future__ import annotations
 from struct import pack
 from typing import TYPE_CHECKING
 
-from API.source.core.exceptions.data_validation_error.generic_error import (
+from rc10_api.source.core.exceptions.data_validation_error.generic_error import (
     WristStateError
 )
-from API.source.features.tools import sleep
-from API.source.models.classes.data_classes.command_templates import (
+from rc10_api.source.features.tools import sleep
+from rc10_api.source.models.classes.data_classes.command_templates import (
     SetWristInputOutputTemplate
 )
-from API.source.models.classes.enum_classes.controller_commands import (
+from rc10_api.source.models.classes.enum_classes.controller_commands import (
     Getters as Get
 )
-from API.source.models.classes.enum_classes.controller_commands import (
+from rc10_api.source.models.classes.enum_classes.controller_commands import (
     Setters as Set
 )
-from API.source.models.constants import (
+from rc10_api.source.models.constants import (
     AVAILABLE_WRIST_DIG_IN_INDEX_COUNT, AVAILABLE_WRIST_DIG_OUT_INDEX_COUNT,
     AVAILABLE_DIG_OUT_INDEX_COUNT, BITS_IN_BYTE, CHECK_FREQUENCY_SEC,
     CTRLR_IO_GET_FUNCTION_UNPACK_VALUES_TYPE,
     CTRLR_IO_SET_FUNCTION_PACK_FORMAT, CTRLR_WRIST_IO_SET_VALUE_PACK_FORMAT,
     DIGITAL_IO_INDEX_COUNT, NO_FUNC_ANSWER_VALUE, WRIST_DIGITAL_IO_INDEX_COUNT
 )
-from API.source.models.type_aliases import (
+from rc10_api.source.models.type_aliases import (
     DigitalIndex, DigitalWristIndex, WristInputActivationType_
 )
-from API.source.core.exceptions.data_validation_error.argument_error import (
+from rc10_api.source.core.exceptions.data_validation_error.argument_error import (
     validation
 )
-from API.source.features.tools import dataclass_to_tuple
-from API.source.models.classes.enum_classes.io_functions import (
+from rc10_api.source.features.tools import dataclass_to_tuple
+from rc10_api.source.models.classes.enum_classes.io_functions import (
     InputFunction, OutputFunction
 )
-from API.source.models.type_aliases import InputFunction_, OutputFunction_
-from API.source.models.classes.enum_classes.state_classes import (
+from rc10_api.source.models.type_aliases import InputFunction_, OutputFunction_
+from rc10_api.source.models.classes.enum_classes.state_classes import (
     WristMode as Wm
 )
 
 if TYPE_CHECKING:
     from logging import Logger
 
-    from API.source.core.network.rtd_receiver_socket import RTDReceiver
-    from API.source.core.network.controller_socket import Controller
+    from rc10_api.source.core.network.rtd_receiver_socket import RTDReceiver
+    from rc10_api.source.core.network.controller_socket import Controller
 
 
 validate_index = validation.validate_index

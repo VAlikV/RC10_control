@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 
-from API.source.models.constants import (
+from rc10_api.source.models.constants import (
     CTRLR_MAX_DIG_OUT_BYTES, CTRLR_MAX_AN_OUT, WRIST_MAX_AN_IN
 )
-from API.source.models.type_aliases import AngleUnits, PositionOrientation
+from rc10_api.source.models.type_aliases import AngleUnits, PositionOrientation
 
 
 @dataclass

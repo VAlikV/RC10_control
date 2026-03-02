@@ -4,10 +4,10 @@ from dataclasses import fields
 from datetime import datetime
 from pathlib import Path
 
-from API.source.models.classes.data_classes.logger_config_template import (
+from rc10_api.source.models.classes.data_classes.logger_config_template import (
     LoggerTemplate
 )
-from API.source.models.constants import LOGGER_NAME
+from rc10_api.source.models.constants import LOGGER_NAME
 
 
 def set_logger(**kwargs) -> None | logging.Logger:
@@ -60,7 +60,7 @@ class FirstRowFileHandler(logging.FileHandler):
         self.first_run = True
         self.filename = filename
         self.separator = (
-            f"{'=' * 7} API Launch "
+            f"{'=' * 7} rc10_api Launch "
             f"{datetime.now().strftime('[%d.%m.%Y %H:%M:%S]')} {'=' * 70}"
         )
 

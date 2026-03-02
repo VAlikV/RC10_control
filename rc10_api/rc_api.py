@@ -5,29 +5,29 @@ import time
 from multiprocessing.pool import ThreadPool
 from struct import pack
 
-from API.source.ap_interface.controller_gravity import ControllerGravity
-from API.source.ap_interface.controller_state import ControllerState
-from API.source.ap_interface.io.io_host import IO
-from API.source.ap_interface.motion.motion_host import Motion
-from API.source.ap_interface.payload import PayLoad
-from API.source.ap_interface.safety_status import SafetyStatus
-from API.source.ap_interface.tool import Tool
-from API.source.ap_interface.wrist.wrist_host import Wrist
-from API.source.core.exceptions.connection_error import ServerPingError
-from API.source.core.exceptions.data_validation_error.version_error import (
+from rc10_api.source.ap_interface.controller_gravity import ControllerGravity
+from rc10_api.source.ap_interface.controller_state import ControllerState
+from rc10_api.source.ap_interface.io.io_host import IO
+from rc10_api.source.ap_interface.motion.motion_host import Motion
+from rc10_api.source.ap_interface.payload import PayLoad
+from rc10_api.source.ap_interface.safety_status import SafetyStatus
+from rc10_api.source.ap_interface.tool import Tool
+from rc10_api.source.ap_interface.wrist.wrist_host import Wrist
+from rc10_api.source.core.exceptions.connection_error import ServerPingError
+from rc10_api.source.core.exceptions.data_validation_error.version_error import (
     ControllerUnlockError
 )
-from API.source.core.network.controller_socket import Controller
-from API.source.core.network.rtd_receiver_socket import RTDReceiver
-from API.source.features.logger import set_logger
-from API.source.features.state_handler import StateHandler
-from API.source.models.classes.data_classes.api_version import (
+from rc10_api.source.core.network.controller_socket import Controller
+from rc10_api.source.core.network.rtd_receiver_socket import RTDReceiver
+from rc10_api.source.features.logger import set_logger
+from rc10_api.source.features.state_handler import StateHandler
+from rc10_api.source.models.classes.data_classes.api_version import (
     RobotInfo, Version
 )
-from API.source.models.classes.enum_classes.controller_commands import (
+from rc10_api.source.models.classes.enum_classes.controller_commands import (
     ControllerUnlockCommand as Cun, Getters as Get, Setters as Set
 )
-from API.source.models.type_aliases import ExcInfoType
+from rc10_api.source.models.type_aliases import ExcInfoType
 
 
 class RobotApi:
@@ -59,7 +59,7 @@ class RobotApi:
         **kwargs
     ) -> None:
         """
-        Пользовательский клиент-класс API - входная точка управления роботом.
+        Пользовательский клиент-класс rc10_api - входная точка управления роботом.
 
         Args:
             ip (str): IPv4 робота (без порта).
@@ -67,7 +67,7 @@ class RobotApi:
                 ошибки обработчика состояний контроллера. При активации флага
                 пользователям необходимо самостоятельно отслеживать состояние
                 безопасности.
-            read_only (bool): Флаг работы API в режиме read_only, подключение
+            read_only (bool): Флаг работы rc10_api в режиме read_only, подключение
                 при этом происходит только к порту RTD.
             timeout (int): Таймаут на подключение к роботу (сек).
             Keyword Args:
@@ -151,15 +151,15 @@ class RobotApi:
             self._thread_pool.close()
             self._thread_pool.join()
             self._logger.debug(
-                f'API private thread pool is closed (all threads are joined). '
+                f'rc10_api private thread pool is closed (all threads are joined). '
                 f'Threads is progress: {threading.active_count()}'
             )
 
     def _shutdown_api_sockets(self, exc_info: ExcInfoType = None):
         """
-        Выходная точка API. Закрытие подключений, потоков.
+        Выходная точка rc10_api. Закрытие подключений, потоков.
         Работает в двух режимах. Если передается сообщение об ошибке, метод
-        завершает работу API в аварийном режиме.
+        завершает работу rc10_api в аварийном режиме.
 
         Args:
             exc_info: ExcInfoType
@@ -175,9 +175,9 @@ class RobotApi:
                 elif not isinstance(exc_info, tuple):
                     exc_info = sys.exc_info()
                 self._logger.exception(exc_info[1], exc_info=exc_info)
-                self._logger.warning('API connection emergency shutdown')
+                self._logger.warning('rc10_api connection emergency shutdown')
             else:
-                self._logger.info('API connection planned shutdown')
+                self._logger.info('rc10_api connection planned shutdown')
             if self._rtd_receiver:
                 self._rtd_receiver.shutdown()
                 self._logger.debug(

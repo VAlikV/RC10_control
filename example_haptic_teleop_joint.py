@@ -1,5 +1,5 @@
 import socket
-from API.controller import JointSpaceJogController, TaskSpaceJogController
+from rc10_api.controller import JointSpaceJogController, TaskSpaceJogController
 import numpy as np
 import time
 

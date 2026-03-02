@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from API.source.models.constants import (
+from rc10_api.source.models.constants import (
     CTRLR_MAX_DIG_IN_BYTES,
     CTRLR_MAX_DIG_OUT_BYTES,
     CTRLR_MAX_AN_IN,

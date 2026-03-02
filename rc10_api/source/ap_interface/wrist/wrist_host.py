@@ -2,28 +2,28 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from struct import pack
 
-from API.source.ap_interface.wrist.analog_io import WristAnalogIO
-from API.source.ap_interface.wrist.digital_io import WristDigitalIO
-from API.source.core.exceptions.data_validation_error.generic_error import (
+from rc10_api.source.ap_interface.wrist.analog_io import WristAnalogIO
+from rc10_api.source.ap_interface.wrist.digital_io import WristDigitalIO
+from rc10_api.source.core.exceptions.data_validation_error.generic_error import (
     FunctionTimeOutError
 )
-from API.source.features.tools import dataclass_to_tuple, sleep
-from API.source.models.type_aliases import WristMode_
-from API.source.models.classes.enum_classes.controller_commands import (
+from rc10_api.source.features.tools import dataclass_to_tuple, sleep
+from rc10_api.source.models.type_aliases import WristMode_
+from rc10_api.source.models.classes.enum_classes.controller_commands import (
     Setters as Set,
 )
-from API.source.models.classes.enum_classes.state_classes import (
+from rc10_api.source.models.classes.enum_classes.state_classes import (
     WristMode as Wm
 )
-from API.source.core.exceptions.data_validation_error.argument_error import (
+from rc10_api.source.core.exceptions.data_validation_error.argument_error import (
     validation
 )
-from API.source.models.constants import (
+from rc10_api.source.models.constants import (
     CHECK_FREQUENCY_SEC,
     CTRLR_WRIST_IO_SET_VALUE_PACK_FORMAT,
     SET_WRIST_MODE_AWAIT_SEC,
 )
-from API.source.models.classes.data_classes.command_templates import (
+from rc10_api.source.models.classes.data_classes.command_templates import (
     SetWristInputOutputTemplate
 )
 
@@ -31,8 +31,8 @@ from API.source.models.classes.data_classes.command_templates import (
 if TYPE_CHECKING:
     from logging import Logger
 
-    from API.source.core.network.rtd_receiver_socket import RTDReceiver
-    from API.source.core.network.controller_socket import Controller
+    from rc10_api.source.core.network.rtd_receiver_socket import RTDReceiver
+    from rc10_api.source.core.network.controller_socket import Controller
 
 
 validate_literal = validation.validate_literal
