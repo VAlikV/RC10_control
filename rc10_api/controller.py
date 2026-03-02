@@ -239,9 +239,6 @@ class TaskSpaceJogController:
         self.treshold_pos = treshold_position
         self.treshold_angel = treshold_angel * np.pi/180
 
-        self.delta_mode = False
-        self.directions = np.array([0,0,0,0,0,0])
-
     # ====================================================================================================
 
     def start(self):
@@ -271,18 +268,6 @@ class TaskSpaceJogController:
 
         with self.lock:
             self.target_pose = target_pose
-            self.delta_mode = False
-
-    # ====================================================================================================
-
-    def set_direction(self, directions):
-        """
-        :param directions: направление для смещения текущих координат и углов эйлера [dx, dy, dz, dr, dp, dy] (-1, 0 или 1)
-        """
-
-        with self.lock:
-            self.directions = np.array(directions)
-            self.delta_mode = True
         
     # ====================================================================================================
 
@@ -366,20 +351,14 @@ class TaskSpaceJogController:
 
             with self.lock:
                 target_pose = self.target_pose
-                delta_mode = self.delta_mode
-                directions = self.directions.copy()
-                # self.directions = np.array([0,0,0,0,0,0])
 
-            current_pose = self.get_current_tcp()
-            error = target_pose - current_pose
+            # print(target_q)
 
-            if delta_mode:
-                # print(directions)
-                dir = self._compute_jog_step(directions)
-            else:
+            if target_pose is not None:
+                current_pose = self.get_current_tcp()
+                error = target_pose - current_pose
                 dir = self._compute_jog_step(error)
-
-            self.robot.motion.linear.jog_once_all_axis(dir)
+                self.robot.motion.linear.jog_once_all_axis(dir)
 
             elapsed = time.time() - start_time
             time_to_sleep = self.dt - elapsed

@@ -17,11 +17,12 @@ def set_logger(**kwargs) -> None | logging.Logger:
             setattr(logger_template, key, value)
     if not isinstance(logger_template.logger, logging.Logger):
         logger_template.logger = logging.getLogger(LOGGER_NAME)
+        logger_template.logger.propagate = False
     else:  # means logger has been overriden by user
         return logger_template.logger
     logger = logger_template.logger
     if not logger_template.enable_logger:
-        logger.setLevel(logging.DEBUG)
+        logger.handlers.clear()
     else:
         logger.setLevel(logging.DEBUG)
         std_formatter = StdFormatter()
