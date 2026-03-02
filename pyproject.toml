@@ -3,9 +3,9 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "api"
+name = "rc10_api"
 version = "0.0.1"
-description = "RC10 control API and jog controllers"
+description = "RC10 control rc10_api and jog controllers"
 authors = [{name = "RC10 Team"}]
 readme = "README.md"
 requires-python = ">=3.9"
@@ -19,4 +19,4 @@ package-dir = {"" = "."}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["API", "API.*"]
+include = ["rc10_api*"]
