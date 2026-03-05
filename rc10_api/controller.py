@@ -3,6 +3,8 @@ import time
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 from rc10_api.rc_api import RobotApi
+from rc10_api.inv_kine_drake_rc10 import RobotIK
+import rc10_api.source.features.mathematics.unit_convert as unit_c
 
 import time
 
@@ -375,3 +377,77 @@ class TaskSpaceJogController:
         dir = ['+' if i > 0 else '-' if i < 0 else '0' for i in error_pos] + ['0']*3 # ['+' if i > 0 else '-' if i < 0 else '0' for i in error_angle]
         
         return dir
+    
+# ====================================================================================================
+# ====================================================================================================
+# ====================================================================================================
+
+class CartesianJogController:
+    """Cartesian linear jog controller for realtime input at 100Hz"""
+
+    def __init__(self, ip, rate_hz=100, velocity=0.15, acceleration=1.0,
+                 deadzone=0.05):
+        
+        self.robot = RobotApi(
+            ip, enable_logger=False, enable_logfile=False,
+            show_std_traceback=True
+            )
+        
+        self.robot.payload.set(mass=0, tcp_mass_center=(0, 0, 0))
+        self.robot.motion.scale_setup.set(velocity=velocity, acceleration=acceleration)
+        self.robot.controller_state.set('run', await_sec=120)
+
+        self.rate_hz = rate_hz
+        self.dt = 1.0 / rate_hz
+        self.deadzone = deadzone
+
+        # Jog directions set from space mouse velocities: [X, Y, Z, Rx, Ry, Rz]
+        self._dirs = ['0'] * 6
+        self._lock = threading.Lock()
+        self._running = False
+        self._thread = None
+
+    def start(self):
+        if not self._running:
+            self._running = True
+            self._thread = threading.Thread(target=self._run_loop, daemon=True)
+            self._thread.start()
+
+    def stop(self):
+        self._running = False
+        if self._thread:
+            self._thread.join()
+
+    def set_velocities(self, vx, vy, vz, vyaw):
+        """Convert SpaceMouse velocities to jog directions"""
+        dirs = ['0'] * 6
+        for i, v in enumerate([vx, vy, vz]):
+            if v > self.deadzone:
+                dirs[i] = '+'
+            elif v < -self.deadzone:
+                dirs[i] = '-'
+        # Rz (yaw) on index 5
+        if vyaw > self.deadzone:
+            dirs[5] = '+'
+        elif vyaw < -self.deadzone:
+            dirs[5] = '-'
+        with self._lock:
+            self._dirs = dirs
+
+    def get_current_tcp(self):
+        rtd = self.robot._rtd_receiver.rt_data
+        return np.array(rtd.act_tcp_x)
+
+    def _run_loop(self):
+        while self._running:
+            t0 = time.monotonic()
+
+            with self._lock:
+                dirs = self._dirs[:]
+
+            self.robot.motion.linear.jog_once_all_axis(dirs)
+
+            elapsed = time.monotonic() - t0
+            remaining = self.dt - elapsed
+            if remaining > 0:
+                precise_sleep(remaining)

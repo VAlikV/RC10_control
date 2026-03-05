@@ -53,7 +53,7 @@ class Controller(SocketWrapper):
             byte_message = byte_message + payload
             
         super().send(byte_message)
-        self._logger.debug(f'Sent command-type: {cmd_type}')
+        # self._logger.debug(f'Sent command-type: {cmd_type}')
         return True
 
     def initialise(self) -> bool:
