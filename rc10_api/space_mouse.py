@@ -99,7 +99,7 @@ class SpaceMouseWrapper:
 
     def _on_button(self, event):
         # Toggle gripper on any button press
-        pressed = event.get('pressed', [])
+        pressed = event.get('val', [])
         if pressed:
             with self._button_lock:
                 self._gripper_state = -self._gripper_state
