@@ -66,6 +66,10 @@ class SpaceMouseWrapper:
         self._raw_rotate = [0, 0, 0]     # roll, pitch, yaw
         self._raw_lock = threading.Lock()
 
+        # Button state: 1.0 = open (default), -1.0 = closed
+        self._gripper_state = 1.0
+        self._button_lock = threading.Lock()
+
         self._lock = threading.Lock()
         self._running = False
         self._thread = None
@@ -75,6 +79,7 @@ class SpaceMouseWrapper:
         print("SpaceMouse devices found:", SpaceMouse.get_devices())
         self._sm.register_handler(self._on_translate, "translate")
         self._sm.register_handler(self._on_rotate, "rotate")
+        self._sm.register_handler(self._on_button, "button")
 
         self.start()
 
@@ -91,6 +96,13 @@ class SpaceMouseWrapper:
     def _on_rotate(self, event):
         with self._raw_lock:
             self._raw_rotate = [event['roll'], event['pitch'], event['yaw']]
+
+    def _on_button(self, event):
+        # Toggle gripper on any button press
+        pressed = event.get('pressed', [])
+        if pressed:
+            with self._button_lock:
+                self._gripper_state = -self._gripper_state
 
     def _integrate_loop(self):
         while self._running:
@@ -153,6 +165,11 @@ class SpaceMouseWrapper:
         with self._lock:
             return (self.x_meter, self.y_meter, self.z_meter,
                     self.roll_radian, self.pitch_radian, self.yaw_radian)
+
+    def get_gripper_state(self):
+        """Returns 1.0 (open) or -1.0 (closed). Toggled by SpaceMouse button press."""
+        with self._button_lock:
+            return self._gripper_state
 
     def get_velocity(self):
         """Returns smoothed velocities in robot frame (vx, vy, vz, vyaw), normalized -1.0 to 1.0.

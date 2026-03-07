@@ -3,7 +3,6 @@ import time
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 from rc10_api.rc_api import RobotApi
-from rc10_api.inv_kine_drake_rc10 import RobotIK
 import rc10_api.source.features.mathematics.unit_convert as unit_c
 
 import time
@@ -69,6 +68,7 @@ class JointSpaceJogController:
 
     def stop(self):
         self.running = False
+        self.robot._shutdown_api_sockets()
         if self.thread:
             self.thread.join()
 
@@ -253,20 +253,19 @@ class TaskSpaceJogController:
 
     def stop(self):
         self.running = False
+        self.robot._shutdown_api_sockets()
         if self.thread:
             self.thread.join()
 
     # ====================================================================================================
 
-    def set_target(self, target_pos, target_rot):
+    def set_target(self, x, y, z, roll, pitch, yaw):
         """
         :param target_pos: координаты целевой точки [x, y, z] в метрах
         :param target_rot: матрица поворота для целевой ориентации [[...], [...], [...]]
         """
 
-        roll, pitch, yaw = R.from_matrix(target_rot).as_euler('xyz', degrees=False)
-
-        target_pose = np.array([target_pos[0], target_pos[1], target_pos[2], roll, pitch, yaw])
+        target_pose = np.array([x, y, z, roll, pitch, yaw])
 
         with self.lock:
             self.target_pose = target_pose
@@ -369,13 +368,21 @@ class TaskSpaceJogController:
 
     # ====================================================================================================
 
+    @staticmethod
+    def _wrap_angle(a):
+        """Wrap angle difference to [-pi, pi]."""
+        return (a + np.pi) % (2 * np.pi) - np.pi
+
     def _compute_jog_step(self, error):
 
         error_pos = np.sign(np.where((np.abs(error[0:3])<self.treshold_pos), 0, error[0:3]))
-        error_angle = np.sign(np.where((np.abs(error[3:6])<self.treshold_angel), 0, error[3:6]))
 
-        dir = ['+' if i > 0 else '-' if i < 0 else '0' for i in error_pos] + ['0']*3 # ['+' if i > 0 else '-' if i < 0 else '0' for i in error_angle]
-        
+        angle_err = np.array([self._wrap_angle(e) for e in error[3:6]])
+        error_angle = np.sign(np.where((np.abs(angle_err)<self.treshold_angel), 0, angle_err))
+
+        dir = (['+' if i > 0 else '-' if i < 0 else '0' for i in error_pos]
+             + ['+' if i > 0 else '-' if i < 0 else '0' for i in error_angle])
+
         return dir
     
 # ====================================================================================================
