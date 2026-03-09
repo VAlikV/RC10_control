@@ -53,6 +53,13 @@ class SpaceMouseWrapper:
         self.pitch_radian = pitch_init
         self.yaw_radian = yaw_init
 
+        self.dx = 0
+        self.dy = 0
+        self.dz = 0
+        self.droll = 0
+        self.dpitch = 0
+        self.dyaw = 0
+
         # Smoothed values (normalized -1 to 1)
         self._smooth_tx = 0.0
         self._smooth_ty = 0.0
@@ -145,6 +152,13 @@ class SpaceMouseWrapper:
                 self.pitch_radian += dpitch
                 self.yaw_radian += dyaw
 
+                self.dx = dx
+                self.dy = dy
+                self.dz = dz
+                self.droll = droll
+                self.dpitch = dpitch
+                self.dyaw = dyaw
+
             time.sleep(self.dt)
 
     def start(self):
@@ -165,6 +179,12 @@ class SpaceMouseWrapper:
         with self._lock:
             return (self.x_meter, self.y_meter, self.z_meter,
                     self.roll_radian, self.pitch_radian, self.yaw_radian)
+        
+    def get_delta(self):
+        """Returns (dX_meter, dY_meter, dZ_meter, dRoll_radian, dPitch_radian, dYaw_radian)"""
+        with self._lock:
+            return (self.dx, self.dy, self.dz,
+                    self.droll, self.dpitch, self.dyaw)
 
     def get_gripper_state(self):
         """Returns 1.0 (open) or -1.0 (closed). Toggled by SpaceMouse button press."""
