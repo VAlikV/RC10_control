@@ -13,17 +13,16 @@ def main():
     ctrl = CartesianJogController(ip=ROBOT_IP, velocity=1, acceleration=1.0)
     ctrl.start()
 
-    joy = PS4Joystick(max_speed=0.05, x_init=0.5, y_init=0.5, z_init=0.5)
-    joy.start()
+    joy = PS4Joystick(max_speed=0.05, x_init=0.5, y_init=0.5, z_init=0.5, roll_init=np.pi, pitch_init=0.0, yaw_init=0.0)
 
     print("Cartesian jog + joystick active")
     print(f"Current TCP: {ctrl.get_current_tcp()}")
 
     try:
         while True:
-            x, y, z = joy.get_joystick()
+            x, y, z, roll, pitch, yaw = joy.get_joystick()
             ctrl.set_target(x, y, z)
-            print(f"Target: [{x:.4f}, {y:.4f}, {z:.4f}]", end='\r')
+            print(f"Target: [{x:.4f}, {y:.4f}, {z:.4f}, {roll:.4f}, {pitch:.4f}, {yaw:.4f}]", end='\r')
             time.sleep(0.01)
 
     except KeyboardInterrupt:
