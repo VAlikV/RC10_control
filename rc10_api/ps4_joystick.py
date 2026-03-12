@@ -18,6 +18,8 @@ class PS4Joystick:
         self.poll_rate = poll_rate
         self.dt = 1.0 / poll_rate
 
+        self.z_low_limit = z_init
+
         # Position accumulators
         self.x_meter = x_init
         self.y_meter = y_init
@@ -107,8 +109,8 @@ class PS4Joystick:
             # UP (negative smoothed_y) → increase X_meter, so negate
             # LEFT (negative smoothed_x) → increase Y_meter, so negate
             # Right stick UP (negative smoothed_z) → increase Z_meter, so negate
-            dx = -self._smoothed_y * self.max_speed * self.dt
-            dy = -self._smoothed_x * self.max_speed * self.dt
+            dx = self._smoothed_x * self.max_speed * self.dt
+            dy = -self._smoothed_y * self.max_speed * self.dt
             dz = -self._smoothed_z * self.max_speed * self.dt
 
             # Rotation:
@@ -119,7 +121,9 @@ class PS4Joystick:
             with self._lock:
                 self.x_meter += dx
                 self.y_meter += dy
-                self.z_meter += dz
+                if self.z_meter + dz >= self.z_low_limit:
+                    self.z_meter += dz
+
                 self.roll_radian += droll
                 self.pitch_radian += dpitch
                 self.yaw_radian += dyaw
