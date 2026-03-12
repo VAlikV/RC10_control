@@ -425,7 +425,7 @@ class CartesianJogController:
         if self._thread:
             self._thread.join()
 
-    def set_velocities(self, vx, vy, vz, vyaw):
+    def set_velocities(self, vx, vy, vz, vroll, vpitch, vyaw):
         """Convert SpaceMouse velocities to jog directions"""
         dirs = ['0'] * 6
         for i, v in enumerate([vx, vy, vz]):

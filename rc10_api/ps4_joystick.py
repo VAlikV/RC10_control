@@ -79,8 +79,6 @@ class PS4Joystick:
             raw_pitch = 0.0 # Set this later 
             raw_yaw = self._controller.get_axis(3)  # Right stick horizontal
 
-
-            
             current_button_state = self._controller.get_button(0)
             # toggle gripper state only on rising edge when it changes from false to true
             if current_button_state and not self._prev_button_state: # cross/x button
@@ -179,12 +177,14 @@ class PS4Joystick:
 
 
 if __name__ == "__main__":
-    joy = PS4Joystick(max_speed=0.05)
+    joy = PS4Joystick(max_speed=1.0)
     try:
         while True:
             x, y, z, roll, pitch, yaw = joy.get_joystick()
+            dx, dy, dz, droll, dpitch, dyaw = joy.get_delta()
             print(f"X_meter: {x:.4f}, Y_meter: {y:.4f}, Z_meter: {z:.4f} "
-                  f"yaw_radian: {yaw: 4f}, gripper_state: {joy.get_gripper_state()}",
+                  f"yaw_radian: {yaw: 4f}, gripper_state: {joy.get_gripper_state()}"
+                  f"dx: {dx:.4f}, dy: {dy:.4f}, dz: {dz:.4f}, dyaw: {dyaw:.4f}",
                   end="\r", flush=True)
             time.sleep(0.05)
     except KeyboardInterrupt:

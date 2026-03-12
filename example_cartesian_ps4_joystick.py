@@ -20,9 +20,9 @@ def main():
 
     try:
         while True:
-            x, y, z, roll, pitch, yaw = joy.get_joystick()
-            ctrl.set_target(x, y, z)
-            print(f"Target: [{x:.4f}, {y:.4f}, {z:.4f}, {roll:.4f}, {pitch:.4f}, {yaw:.4f}]", end='\r')
+            dx, dy, dz, droll, dpitch, dyaw = joy.get_delta()
+            ctrl.set_velocities(dx, dy, dz, droll, dpitch, dyaw)
+            print(f"Delta velocities: [{dx:.4f}, {dy:.4f}, {dz:.4f}, {droll:.4f}, {dpitch:.4f}, {dyaw:.4f}]", end='\r')
             time.sleep(0.01)
 
     except KeyboardInterrupt:
