@@ -20,9 +20,9 @@ def main():
 
     try:
         while True:
-            dx, dy, dz, droll, dpitch, dyaw = joy.get_delta()
-            ctrl.set_velocities(dx, dy, dz, droll, dpitch, dyaw)
-            print(f"Delta velocities: [{dx:.4f}, {dy:.4f}, {dz:.4f}, {droll:.4f}, {dpitch:.4f}, {dyaw:.4f}]", end='\r')
+            dvx, dvy, dvz, dvroll, dvpitch, dvyaw = joy.get_delta_velocities()
+            ctrl.set_velocities(dvx, dvy, dvz, dvroll, dvpitch, dvyaw)
+            print(f"Delta velocities: [{dvx:.4f}, {dvy:.4f}, {dvz:.4f}, {dvroll:.4f}, {dvpitch:.4f}, {dvyaw:.4f}]", end='\r')
             time.sleep(0.01)
 
     except KeyboardInterrupt:

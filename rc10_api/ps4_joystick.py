@@ -152,10 +152,10 @@ class PS4Joystick:
         with self._lock:
             return self.x_meter, self.y_meter, self.z_meter, self.roll_radian, self.pitch_radian, self.yaw_radian
         
-    def get_delta(self):
-        """Returns (dX_meter, dY_meter, dZ_meter) - current accumulated position"""
+    def get_delta_velocities(self):
+        """Returns (dvx, dvy, dvz, dvroll, dvpitch, dvyaw) - current velocities"""
         with self._lock:
-            return self.dx, self.dy, self.dz, self.droll, self.dpitch, self.dyaw
+            return self._smoothed_x, self._smoothed_y, self._smoothed_z, self._smoothed_roll, self._smoothed_pitch, self._smoothed_yaw
 
     def get_gripper_state(self):
         """Returns 1.0 (open) or -1.0 (closed). Toggled by PS4 button x press."""
@@ -177,14 +177,14 @@ class PS4Joystick:
 
 
 if __name__ == "__main__":
-    joy = PS4Joystick(max_speed=1.0)
+    joy = PS4Joystick(max_speed=0.05)
     try:
         while True:
             x, y, z, roll, pitch, yaw = joy.get_joystick()
-            dx, dy, dz, droll, dpitch, dyaw = joy.get_delta()
+            dvx, dvy, dvz, dvroll, dvpitch, dvyaw = joy.get_delta_velocities()
             print(f"X_meter: {x:.4f}, Y_meter: {y:.4f}, Z_meter: {z:.4f} "
-                  f"yaw_radian: {yaw: 4f}, gripper_state: {joy.get_gripper_state()}"
-                  f"dx: {dx:.4f}, dy: {dy:.4f}, dz: {dz:.4f}, dyaw: {dyaw:.4f}",
+                  f"yaw_radian: {yaw: 4f}, gripper_state: {joy.get_gripper_state()} "
+                  f"vx: {dvx:.4f}, vy: {dvy:.4f}, vz: {dvz:.4f}, vyaw: {dvyaw:.4f} ",
                   end="\r", flush=True)
             time.sleep(0.05)
     except KeyboardInterrupt:
