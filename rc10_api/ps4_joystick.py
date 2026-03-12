@@ -3,6 +3,8 @@ import time
 import threading
 import numpy as np
 
+from gripper import Gripper
+
 
 class PS4Joystick:
     """Non-blocking PS4 joystick controller that integrates stick input into position values"""
@@ -155,7 +157,7 @@ class PS4Joystick:
     def get_delta_velocities(self):
         """Returns (dvx, dvy, dvz, dvroll, dvpitch, dvyaw) - current velocities"""
         with self._lock:
-            return self._smoothed_x, self._smoothed_y, self._smoothed_z, self._smoothed_roll, self._smoothed_pitch, self._smoothed_yaw
+            return self._smoothed_x, -self._smoothed_y, -self._smoothed_z, self._smoothed_roll, self._smoothed_pitch, -self._smoothed_yaw
 
     def get_gripper_state(self):
         """Returns 1.0 (open) or -1.0 (closed). Toggled by PS4 button x press."""
