@@ -45,6 +45,7 @@ class PS4Joystick:
 
         # Button state: 1.0 = open (default), -1.0 = closed
         self._gripper_state = 1.0
+        self._prev_button_state = 1.0
 
         self._lock = threading.Lock()
         self._running = False
@@ -78,8 +79,13 @@ class PS4Joystick:
             raw_pitch = 0.0 # Set this later 
             raw_yaw = self._controller.get_axis(3)  # Right stick horizontal
 
-            if self._controller.get_button(0):  # cross/x button
+
+            
+            current_button_state = self._controller.get_button(0)
+            # toggle gripper state only on rising edge when it changes from false to true
+            if current_button_state and not self._prev_button_state: # cross/x button
                 self._toggle_gripper_state()
+            self._prev_button_state = current_button_state
 
             dead_x = self._apply_deadzone(raw_x)
             dead_y = self._apply_deadzone(raw_y)
@@ -174,12 +180,11 @@ class PS4Joystick:
 
 if __name__ == "__main__":
     joy = PS4Joystick(max_speed=0.05)
-    joy.start()
     try:
         while True:
-            x, y, z, yaw = joy.get_joystick()
+            x, y, z, roll, pitch, yaw = joy.get_joystick()
             print(f"X_meter: {x:.4f}, Y_meter: {y:.4f}, Z_meter: {z:.4f} "
-                  f"yaw_radian: {yaw: 4f}",
+                  f"yaw_radian: {yaw: 4f}, gripper_state: {joy.get_gripper_state()}",
                   end="\r", flush=True)
             time.sleep(0.05)
     except KeyboardInterrupt:
