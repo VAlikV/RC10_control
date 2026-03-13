@@ -2,10 +2,14 @@ import pygame
 import time
 import threading
 import numpy as np
+import logging
 
-from gripper import Gripper
-
-
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(threadName)-10s | %(levelname)-8s | %(message)s',
+    datefmt='%H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 class PS4Joystick:
     """Non-blocking PS4 joystick controller that integrates stick input into position values"""
 
@@ -49,7 +53,6 @@ class PS4Joystick:
 
         # Button state: 1.0 = open (default), -1.0 = closed
         self._gripper_state = 1.0
-        self._prev_button_state = 1.0
 
         self._lock = threading.Lock()
         self._running = False
@@ -59,11 +62,12 @@ class PS4Joystick:
         pygame.init()
         pygame.joystick.init()
         if pygame.joystick.get_count() == 0:
+            logger.error("Failed to find a connected controller")
             raise RuntimeError("No controller found")
         self._controller = pygame.joystick.Joystick(0)
         self._controller.init()
         self.start()
-        print(f"Connected: {self._controller.get_name()}")
+        logger.info(f"Connected: {self._controller.get_name()}")
 
     def _apply_deadzone(self, value):
         if abs(value) < self.deadzone:
@@ -72,7 +76,21 @@ class PS4Joystick:
 
     def _poll_loop(self):
         while self._running:
-            pygame.event.pump()
+
+            for event in pygame.event.get():
+                if event.type == pygame.JOYBUTTONDOWN: # rising edge
+                    # print(event.button)
+                    if event.button == 0:   
+                        # 0 is x button on ps4 joystick
+                        # check which button has what index by printing event.button 
+                        # or check docs: https://www.pygame.org/docs/ref/joystick.html#playstation-4-controller-pygame-2-x
+                        self._toggle_gripper_state()
+
+                    if event.button == 4: # L1 button
+                        self._adjust_max_speed(-0.01)
+
+                    if event.button == 5: # R1 button
+                        self._adjust_max_speed(0.01)
 
             raw_x = self._controller.get_axis(0)  # Left stick horizontal
             raw_y = self._controller.get_axis(1)  # Left stick vertical
@@ -82,12 +100,6 @@ class PS4Joystick:
             raw_roll = 0.0 # Set this later
             raw_pitch = 0.0 # Set this later 
             raw_yaw = self._controller.get_axis(3)  # Right stick horizontal
-
-            current_button_state = self._controller.get_button(0)
-            # toggle gripper state only on rising edge when it changes from false to true
-            if current_button_state and not self._prev_button_state: # cross/x button
-                self._toggle_gripper_state()
-            self._prev_button_state = current_button_state
 
             dead_x = self._apply_deadzone(raw_x)
             dead_y = self._apply_deadzone(raw_y)
@@ -172,6 +184,11 @@ class PS4Joystick:
         """Toggle the gripper state"""
         with self._lock:
             self._gripper_state = -self._gripper_state
+
+    def _adjust_max_speed(self, delta_speed):
+        new_speed = self.max_speed + delta_speed
+        self.max_speed = max(0.01, min(0.2, new_speed))
+        logger.info(f"Max translation speed adjusted to: {self.max_speed:.2f}")
 
     def reset(self):
         """Reset position to origin"""
