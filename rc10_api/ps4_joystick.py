@@ -76,7 +76,7 @@ class PS4Joystick:
 
     def _poll_loop(self):
         while self._running:
-
+            # pygame.event.pump()
             for event in pygame.event.get():
                 if event.type == pygame.JOYBUTTONDOWN: # rising edge
                     # print(event.button)
@@ -186,9 +186,10 @@ class PS4Joystick:
             self._gripper_state = -self._gripper_state
 
     def _adjust_max_speed(self, delta_speed):
-        new_speed = self.max_speed + delta_speed
-        self.max_speed = max(0.01, min(0.2, new_speed))
-        logger.info(f"Max translation speed adjusted to: {self.max_speed:.2f}")
+        with self._lock:
+            new_speed = self.max_speed + delta_speed
+            self.max_speed = max(0.01, min(0.2, new_speed))
+            logger.info(f"Max translation speed adjusted to: {self.max_speed:.2f}")
 
     def reset(self):
         """Reset position to origin"""
