@@ -54,6 +54,7 @@ class PS4Joystick:
 
         # Button state: 1.0 = open (default), -1.0 = closed
         self._gripper_state = 1.0
+        self._prev_button_state = False
 
         self._lock = threading.Lock()
         self._running = False
@@ -103,6 +104,13 @@ class PS4Joystick:
             else:
                 with self._lock:
                     self.max_speed = self.max_speed_init
+
+
+            current_button_state = self._controller.get_button(0)
+            # toggle gripper state only on rising edge when it changes from false to true
+            if current_button_state and not self._prev_button_state: # cross/x button
+                self._toggle_gripper_state()
+            self._prev_button_state = current_button_state
 
 
             # TODO: add roll and pitch maping to joystick later, not needed right now
