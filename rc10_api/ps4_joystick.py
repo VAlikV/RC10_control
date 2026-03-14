@@ -16,6 +16,7 @@ class PS4Joystick:
     def __init__(self, max_speed=0.05, max_rot_speed=0.1, deadzone=0.05, alpha=0.3, poll_rate=100,
                  x_init=0.0, y_init=0.0, z_init=0.0, roll_init=np.pi, pitch_init=0.0, yaw_init=0.0):
         self.max_speed = max_speed
+        self.max_speed_init = max_speed
         self.max_rot_speed = max_rot_speed
         self.deadzone = deadzone
         self.alpha = alpha
@@ -76,25 +77,33 @@ class PS4Joystick:
 
     def _poll_loop(self):
         while self._running:
-            # pygame.event.pump()
-            for event in pygame.event.get():
-                if event.type == pygame.JOYBUTTONDOWN: # rising edge
-                    # print(event.button)
-                    if event.button == 0:   
-                        # 0 is x button on ps4 joystick
-                        # check which button has what index by printing event.button 
-                        # or check docs: https://www.pygame.org/docs/ref/joystick.html#playstation-4-controller-pygame-2-x
-                        self._toggle_gripper_state()
+            pygame.event.pump()
+            # for event in pygame.event.get():
+            #     if event.type == pygame.JOYBUTTONDOWN: # rising edge
+            #         # print(event.button)
+            #         if event.button == 0:   
+            #             # 0 is x button on ps4 joystick
+            #             # check which button has what index by printing event.button 
+            #             # or check docs: https://www.pygame.org/docs/ref/joystick.html#playstation-4-controller-pygame-2-x
+            #             self._toggle_gripper_state()
 
-                    if event.button == 4: # L1 button
-                        self._adjust_max_speed(-0.01)
+            #         if event.button == 4: # L1 button
+            #             self._adjust_max_speed(-0.01)
 
-                    if event.button == 5: # R1 button
-                        self._adjust_max_speed(0.01)
+            #         if event.button == 5: # R1 button
+            #             self._adjust_max_speed(0.01)
 
             raw_x = self._controller.get_axis(0)  # Left stick horizontal
             raw_y = self._controller.get_axis(1)  # Left stick vertical
             raw_z = self._controller.get_axis(4)  # Right stick vertical
+
+            if self._controller.get_button(4):
+                with self._lock:
+                    self.max_speed = 0.01
+            else:
+                with self._lock:
+                    self.max_speed = self.max_speed_init
+
 
             # TODO: add roll and pitch maping to joystick later, not needed right now
             raw_roll = 0.0 # Set this later
