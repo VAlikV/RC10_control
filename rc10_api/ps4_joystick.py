@@ -56,6 +56,18 @@ class PS4Joystick:
         self._gripper_state = 1.0
         self._prev_button_state = False
 
+
+        # HIL-SERL button states while recording dataset
+        self._intervention = False  # R1 button - level triggered - hold for intervention
+        self._success = False   # Traingle button 3 - edge triggered
+        self._terminate = False # Circle button 1 - edge trigger
+        self._rerecord = False  # Square button 2 - edge trigger
+
+        self._prev_success = False
+        self._prev_terminate = False
+        self._prev_rerecord = False
+
+
         self._lock = threading.Lock()
         self._running = False
         self._thread = None
@@ -98,18 +110,34 @@ class PS4Joystick:
             raw_y = self._controller.get_axis(1)  # Left stick vertical
             raw_z = self._controller.get_axis(4)  # Right stick vertical
 
-            if self._controller.get_button(4):
+            if self._controller.get_button(4):  # L1 button 0
                 with self._lock:
                     self.max_speed = 0.01
             else:
                 with self._lock:
                     self.max_speed = self.max_speed_init
 
+            current_intervention = self._controller.get_button(5)   # R1 button
+            current_success = self._controller.get_button(3)    # Triangle button
+            current_terminate = self._controller.get_button(1)  # Circle button
+            current_rerecord = self._controller.get_button(2)   # Square button
+            current_button_state = self._controller.get_button(0)   # X/cross button
 
-            current_button_state = self._controller.get_button(0)
-            # toggle gripper state only on rising edge when it changes from false to true
-            if current_button_state and not self._prev_button_state: # cross/x button
-                self._toggle_gripper_state()
+            with self._lock:
+                self._intervention = current_intervention
+                if current_success and not self._prev_success:
+                    self._success = True
+                if current_terminate and not self._prev_terminate:
+                    self._terminate = True
+                if current_rerecord and not self._prev_rerecord:
+                    self._rerecord = True
+                # toggle gripper state only on rising edge when it changes from false to true
+                if current_button_state and not self._prev_button_state: # cross/x button
+                    self._toggle_gripper_state()
+
+            self._prev_success = current_success
+            self._prev_terminate = current_terminate
+            self._prev_rerecord = current_rerecord
             self._prev_button_state = current_button_state
 
 
@@ -191,6 +219,25 @@ class PS4Joystick:
         """Returns (dvx, dvy, dvz, dvroll, dvpitch, dvyaw) - current velocities"""
         with self._lock:
             return self._smoothed_x, -self._smoothed_y, -self._smoothed_z, self._smoothed_roll, self._smoothed_pitch, -self._smoothed_yaw
+
+    def get_normalized_deltas(self):
+        """Returns smoothed stick delections in [-1, 1] for x, y, z, and yaw"""
+        with self._lock:
+            return self._smoothed_x, -self._smoothed_y, -self._smoothed_z, -self._smoothed_yaw
+
+    def get_button_states(self):
+        """Returns HIL-SERL episode control button states and clears edge trigger flags"""
+        with self._lock:
+            states = {
+                "is_intervention": self._intervention,
+                "success": self._success,
+                "terminate_episode": self._terminate,
+                "rerecord_episode": self._rerecord,
+            }
+            self._success = False
+            self._terminate = False
+            self._rerecord = False
+            return states
 
     def get_gripper_state(self):
         """Returns 1.0 (open) or -1.0 (closed). Toggled by PS4 button x press."""
