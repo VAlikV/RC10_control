@@ -118,9 +118,9 @@ class PS4Joystick:
                     self.max_speed = self.max_speed_init
 
             current_intervention = self._controller.get_button(5)   # R1 button
-            current_success = self._controller.get_button(3)    # Triangle button
+            current_success = self._controller.get_button(2)    # Triangle button
             current_terminate = self._controller.get_button(1)  # Circle button
-            current_rerecord = self._controller.get_button(2)   # Square button
+            current_rerecord = self._controller.get_button(3)   # Square button
             current_button_state = self._controller.get_button(0)   # X/cross button
 
             with self._lock:
@@ -133,7 +133,7 @@ class PS4Joystick:
                     self._rerecord = True
                 # toggle gripper state only on rising edge when it changes from false to true
                 if current_button_state and not self._prev_button_state: # cross/x button
-                    self._toggle_gripper_state()
+                    self._gripper_state = -self._gripper_state
 
             self._prev_success = current_success
             self._prev_terminate = current_terminate
