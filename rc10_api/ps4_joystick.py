@@ -23,7 +23,7 @@ class PS4Joystick:
         self.poll_rate = poll_rate
         self.dt = 1.0 / poll_rate
 
-        self.z_low_limit = z_init
+        self.z_low_limit = 0.0
 
         # Position accumulators
         self.x_meter = x_init
@@ -34,6 +34,13 @@ class PS4Joystick:
         self.roll_radian = roll_init
         self.pitch_radian = pitch_init
         self.yaw_radian = yaw_init
+
+        self.x_init = x_init
+        self.y_init = y_init
+        self.z_init = z_init
+        self.roll_init = roll_init
+        self.pitch_init = pitch_init
+        self.yaw_init = yaw_init
 
         self.dx = 0.0
         self.dy = 0.0
@@ -258,11 +265,12 @@ class PS4Joystick:
     def reset(self):
         """Reset position to origin"""
         with self._lock:
-            self.x_meter = 0.0
-            self.y_meter = 0.0
-            self.z_meter = 0.0
-            self.yaw_radian = 0.0
-
+            self.x_meter = self.x_init
+            self.y_meter = self.y_init
+            self.z_meter = self.z_init
+            self.roll_radian = self.roll_init
+            self.pitch_radian = self.pitch_init
+            self.yaw_radian = self.yaw_init  
 
 if __name__ == "__main__":
     joy = PS4Joystick(max_speed=0.05)
